@@ -1,0 +1,47 @@
+---
+title: "UCP Leadership Scenarios"
+author: "Alexander Ondrus"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Sankey Diagrams for UCP Leadership Scenarios
+
+I found `@JLisaYoung`'s [tweet](https://twitter.com/JLisaYoung/status/1563956318687629313?s=20&t=dVd9B8BqAOqJe_76O1zKfQ) about potential outcomes of the UCP leadership race fascinating and so I wanted to contribute. Here's a brief overview of the steps that I undertook, along with the results.
+
+### Data
+
+I downloaded the data from the google sheet found [here](https://t.co/mYb79wLm5h) as an Excel workbook, removed all of the rows above the data on each sheet, tweaked the sheet names, and deleted the surprise plot twist (only because I didn't know how to visualize it, not because it didn't intrigue me).
+
+For the "Base Model Declining Subsequent" sheet I deleted the "Adjusted Final" column as I wanted to be consistent with the prior columns in that sheet.
+
+### Processing and Visualizing
+
+I wrote functions in R to read in the data and visualize it using David Sjoberg's `ggsankey` package (see [here](https://github.com/davidsjoberg/ggsankey)) for details. The functions I worte are contained in the `HelperFunctions.R` file in my [GitHub repo](https://github.com/alex-ondrus/ucp-leadership-sankeys) for this project.
+
+### Results
+
+Here are the Sankeys that were obtained for each of the different scenarios listed:
+
+```{r generate-sankeys, message=FALSE, warning=FALSE, results='asis'}
+source('HelperFunctions.R')
+
+sheet_names <- excel_sheets("UCP Leadership Scenarios.xlsx")
+
+sankeys_list <- list()
+
+for(current_sheet_name in sheet_names){
+  sankeys_list[[current_sheet_name]] <- knitr::knit_child(
+    "IndividualSankey.rmd",
+    envir = environment(),
+    quiet = TRUE
+  )
+}
+
+cat(unlist(sankeys_list), sep = "\n")
+```
+

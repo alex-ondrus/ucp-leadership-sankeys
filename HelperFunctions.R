@@ -84,10 +84,12 @@ read_distributions <- function(
     sheet = sheet_to_read,
     col_names = FALSE,
     skip = n_candidates + rows_to_skip + 2,
-    n_max = 2*n_candidates + rows_to_skip + 3,
+    n_max = 2*n_candidates + rows_to_skip + 1,
     na = c("", "n/a")
   ) %>% 
     select(-`...1`)
+  
+  # return(transition_data)
   
   colnames(transition_data) <- c(
     "Candidate",
@@ -259,11 +261,11 @@ create_sankey_data <- function(
       sankey_labels_df
     ) %>% 
     mutate(
-      Label = paste(round(SupportLabel), "%", sep = ""),
+      Label = paste(round(SupportLabel, digits = 1), "%", sep = ""),
       Label = case_when(
-        (FromRound == max(FromRound)) & (Support == max(Support)) ~ paste("Winner", "\n", round(Support), "%", sep = ""),
-        FromRound == max(FromRound) ~ paste(round(Support), "%", sep = ""),
-        (FromRound == 1) ~ paste(as.character(FromCandidate), "\n", round(SupportLabel), "%", sep = ""),
+        (FromRound == max(FromRound)) & (Support == max(Support)) ~ paste("Winner", "\n", round(Support, digits = 1), "%", sep = ""),
+        FromRound == max(FromRound) ~ paste(round(Support, digits = 1), "%", sep = ""),
+        (FromRound == 1) ~ paste(as.character(FromCandidate), "\n", round(SupportLabel, digits = 1), "%", sep = ""),
         # FromRound == 1 ~ as.character(FromCandidate),
         is.na(SupportLabel) ~ NA_character_,
         FromRound < num_rounds ~ Label,
@@ -311,7 +313,8 @@ visualize_sankey_data <- function(
     guides(fill = "none") + 
     labs(
       x = NULL,
-      title = main_title
+      title = main_title,
+      caption = "Scenarios: @JLisaYoung\nVisuals: @DrAOndrus"
     ) +
     theme_sankey(base_size = 18) + 
     theme(

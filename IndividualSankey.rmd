@@ -1,0 +1,13 @@
+```{r fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
+current_sankey_title <- current_sheet_name
+current_sankey_data <- create_sankey_data(
+  sheet_to_read = current_sheet_name
+)
+
+current_sankey <- visualize_sankey_data(
+  current_sankey_data,
+  current_sankey_title
+)
+
+plot(current_sankey)
+```
